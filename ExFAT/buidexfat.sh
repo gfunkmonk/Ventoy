@@ -23,11 +23,11 @@ mkdir -p EXFAT/shared
 mkdir -p EXFAT/static
 
 
-rm -rf exfat-1.3.0
-unzip exfat-1.3.0.zip
-sed "/printf.*VERSION/a\    if (access(\"/etc/initrd-release\", F_OK) >= 0) argv[0][0] = '@';"  -i exfat-1.3.0/fuse/main.c
+rm -rf exfat-1.4.0
+unzip exfat-1.4.0.zip
+sed "/printf.*VERSION/a\    if (access(\"/etc/initrd-release\", F_OK) >= 0) argv[0][0] = '@';"  -i exfat-1.4.0/fuse/main.c
 
-cd exfat-1.3.0
+cd exfat-1.4.0
 autoreconf --install
 ./configure --prefix="$CUR" CFLAGS='-static -O2 -D_FILE_OFFSET_BITS=64' FUSE_CFLAGS="-I$CUR/LIBFUSE/include/" FUSE_LIBS="$CUR/LIBFUSE/lib/libfuse.a -pthread $opt -ldl"
 make
@@ -39,13 +39,13 @@ cp fuse/mount.exfat-fuse ../EXFAT/static/mount.exfat-fuse
 cp mkfs/mkexfatfs ../EXFAT/static/mkexfatfs
 
 cd ..
-rm -rf exfat-1.3.0
+rm -rf exfat-1.4.0
 
-unzip exfat-1.3.0.zip
-sed "/printf.*VERSION/a\    if (access(\"/etc/initrd-release\", F_OK) >= 0) argv[0][0] = '@';"  -i exfat-1.3.0/fuse/main.c
+unzip exfat-1.4.0.zip
+sed "/printf.*VERSION/a\    if (access(\"/etc/initrd-release\", F_OK) >= 0) argv[0][0] = '@';"  -i exfat-1.4.0/fuse/main.c
 
 
-cd exfat-1.3.0
+cd exfat-1.4.0
 autoreconf --install
 ./configure --prefix="$CUR" CFLAGS='-O2 -D_FILE_OFFSET_BITS=64' FUSE_CFLAGS="-I$CUR/LIBFUSE/include/" FUSE_LIBS="$CUR/LIBFUSE/lib/libfuse.a -lpthread -ldl $opt"
 make
@@ -57,7 +57,7 @@ cp fuse/mount.exfat-fuse ../EXFAT/shared/mount.exfat-fuse
 cp mkfs/mkexfatfs ../EXFAT/shared/mkexfatfs
 
 cd ..
-rm -rf exfat-1.3.0
+rm -rf exfat-1.4.0
 
 
 
