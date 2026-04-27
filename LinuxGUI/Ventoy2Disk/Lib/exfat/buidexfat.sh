@@ -6,10 +6,10 @@ rm -rf src
 mkdir -p src/libexfat
 mkdir -p src/mkfs
 
-rm -rf exfat-1.3.0
-unzip exfat-1.3.0.zip
+rm -rf exfat-1.4.0
+unzip exfat-1.4.0.zip
 
-cd exfat-1.3.0
+cd exfat-1.4.0
 autoreconf --install
 ./configure --prefix="$CUR" CFLAGS='-O2 -D_FILE_OFFSET_BITS=64'
 make
@@ -21,7 +21,7 @@ cp -a mkfs/*.h ../src/mkfs/
 rm -f ../src/libexfat/log.c
 
 cd ..
-rm -rf exfat-1.3.0
+rm -rf exfat-1.4.0
 
 mv src/mkfs/main.c src/mkfs/mkexfat_main.c
 sed 's/<exfat.h>/"exfat.h"/g' -i src/mkfs/mkexfat_main.c
