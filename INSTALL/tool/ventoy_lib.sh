@@ -213,7 +213,7 @@ get_disk_ventoy_version() {
 wait_and_create_part() {
     vPART1=$1
     vPART2=$2
-    echo 'Wait for partitions $vPART1 and $vPART2 ...'
+    echo "Wait for partitions $vPART1 and $vPART2 ..."
     for i in 0 1 2 3 4 5 6 7 8 9; do
         if ls -l $vPART1 2>/dev/null | grep -q '^b'; then
             if ls -l $vPART2 2>/dev/null | grep -q '^b'; then

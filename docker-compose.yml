@@ -1,8 +1,7 @@
-version: '2'
-
 services:
   ventoy:
     build: .
+    image: ventoy-ventoy
     privileged: true
     volumes:
-     - .:/ventoy
+      - .:/ventoy

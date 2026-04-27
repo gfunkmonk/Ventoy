@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Mirror the Github repos to Gitee.
-      uses: Yikun/hub-mirror-action@master
+      uses: Yikun/hub-mirror-action@v1.5
       with:
         src: github/ventoy
         dst: gitee/LongPanda

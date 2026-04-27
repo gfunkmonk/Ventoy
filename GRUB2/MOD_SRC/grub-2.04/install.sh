@@ -61,7 +61,7 @@ if [ "$1" = "uefi" ]; then
     cp -a $VT_DIR/GRUB2/PXE/grub2/x86_64-efi/normal.mod    $VT_DIR/INSTALL/grub/x86_64-efi/normal.mod  || exit 1      
 
     #copy other modules
-    ls -1 $VT_DIR/GRUB2/INSTALL/lib/grub/x86_64-efi/ | egrep '\.(lst|mod)$' | while read line; do
+    ls -1 $VT_DIR/GRUB2/INSTALL/lib/grub/x86_64-efi/ | grep -E '\.(lst|mod)$' | while read line; do
         if ! echo $all_modules | grep -q " ${line%.mod} "; then
             echo "Copy $line ..."
             cp -a $VT_DIR/GRUB2/INSTALL/lib/grub/x86_64-efi/$line    $VT_DIR/INSTALL/grub/x86_64-efi/
@@ -77,7 +77,7 @@ elif [ "$1" = "i386efi" ]; then
     cp -a $VT_DIR/GRUB2/PXE/grub2/i386-efi/normal.mod    $VT_DIR/INSTALL/grub/i386-efi/normal.mod  || exit 1      
 
     #copy other modules
-    ls -1 $VT_DIR/GRUB2/INSTALL/lib/grub/i386-efi/ | egrep '\.(lst|mod)$' | while read line; do
+    ls -1 $VT_DIR/GRUB2/INSTALL/lib/grub/i386-efi/ | grep -E '\.(lst|mod)$' | while read line; do
         if ! echo $all_modules | grep -q " ${line%.mod} "; then
             echo "Copy $line ..."
             cp -a $VT_DIR/GRUB2/INSTALL/lib/grub/i386-efi/$line    $VT_DIR/INSTALL/grub/i386-efi/
@@ -93,7 +93,7 @@ elif [ "$1" = "arm64" ]; then
     cp -a $VT_DIR/GRUB2/PXE/grub2/arm64-efi/normal.mod    $VT_DIR/INSTALL/grub/arm64-efi/normal.mod  || exit 1      
 
     #copy other modules
-    ls -1 $VT_DIR/GRUB2/INSTALL/lib/grub/arm64-efi/ | egrep '\.(lst|mod)$' | while read line; do
+    ls -1 $VT_DIR/GRUB2/INSTALL/lib/grub/arm64-efi/ | grep -E '\.(lst|mod)$' | while read line; do
         if ! echo $all_modules | grep -q " ${line%.mod} "; then
             echo "Copy $line ..."
             cp -a $VT_DIR/GRUB2/INSTALL/lib/grub/arm64-efi/$line    $VT_DIR/INSTALL/grub/arm64-efi/
@@ -111,7 +111,7 @@ elif [ "$1" = "mips64el" ]; then
     cp -a $VT_DIR/GRUB2/PXE/grub2/mips64el-efi/normal.mod    $VT_DIR/INSTALL/grub/mips64el-efi/normal.mod  || exit 1      
 
     #copy other modules
-    ls -1 $VT_DIR/GRUB2/INSTALL/lib/grub/mips64el-efi/ | egrep '\.(lst|mod)$' | while read line; do
+    ls -1 $VT_DIR/GRUB2/INSTALL/lib/grub/mips64el-efi/ | grep -E '\.(lst|mod)$' | while read line; do
         if ! echo $all_modules | grep -q " ${line%.mod} "; then
             echo "Copy $line ..."
             cp -a $VT_DIR/GRUB2/INSTALL/lib/grub/mips64el-efi/$line    $VT_DIR/INSTALL/grub/mips64el-efi/
@@ -127,7 +127,7 @@ else
     cp -a $VT_DIR/GRUB2/INSTALL/lib/grub/i386-pc/boot.img  $VT_DIR/INSTALL/grub/i386-pc/boot.img   || exit 1
     
     #copy other modules
-    ls -1 $VT_DIR/GRUB2/INSTALL/lib/grub/i386-pc/ | egrep '\.(lst|mod)$' | while read line; do
+    ls -1 $VT_DIR/GRUB2/INSTALL/lib/grub/i386-pc/ | grep -E '\.(lst|mod)$' | while read line; do
         if ! echo $all_modules | grep -q " ${line%.mod} "; then
             echo "Copy $line ..."
             rm -f $VT_DIR/INSTALL/grub/i386-pc/$line

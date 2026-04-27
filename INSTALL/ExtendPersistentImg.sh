@@ -22,7 +22,9 @@ fi
 
 uid=$(id -u)
 if [ $uid -ne 0 ]; then
-    print_err "Please use sudo or run the script as root."
+    echo "" >&2
+    echo "Please use sudo or run the script as root." >&2
+    echo "" >&2
     exit 1
 fi
 
