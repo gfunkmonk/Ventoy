@@ -11,11 +11,11 @@ mkdir SRC
 mkdir NBP
 mkdir PXE
 
-tar -xf grub-2.04.tar.xz -C ./SRC/
+tar -xf grub-2.14.tar.xz -C ./SRC/
 
-/bin/cp -a ./MOD_SRC/grub-2.04  ./SRC/
+/bin/cp -a ./MOD_SRC/grub-2.14  ./SRC/
 
-cd ./SRC/grub-2.04
+cd ./SRC/grub-2.14
 
 
 # build for x86_64-efi

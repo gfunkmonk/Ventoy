@@ -46,8 +46,8 @@ echo "}" >> .tmpfunc
 cat .tmpfunc >> $cfgfile
 rm -f .tmpfunc
 
-rm -f ../GRUB2/SRC/grub-2.04/grub-core/term/$cfgfile
-cp -a $cfgfile ../GRUB2/SRC/grub-2.04/grub-core/term/$cfgfile
+rm -f ../GRUB2/SRC/grub-2.14/grub-core/term/$cfgfile
+cp -a $cfgfile ../GRUB2/SRC/grub-2.14/grub-core/term/$cfgfile
 
 
 
