@@ -95,7 +95,7 @@ else
     exit 1
 fi
 
-if [ "$outputdir" != "persistence.dat" ]; then
+if [ "$outputfile" != "persistence.dat" ]; then
     mkdir -p "$(dirname "$outputfile")"
 fi
 
@@ -107,9 +107,9 @@ freeloop=$(losetup -f)
 
 losetup $freeloop "$outputfile"
 
-if [ ! -z "$passphrase" ]; then
-    printf "$passphrase" | cryptsetup -q --verbose luksFormat $freeloop -
-    printf "$passphrase" | cryptsetup -q --verbose luksOpen $freeloop persist_decrypted -
+if [ -n "$passphrase" ]; then
+    printf '%s' "$passphrase" | cryptsetup -q --verbose luksFormat $freeloop -
+    printf '%s' "$passphrase" | cryptsetup -q --verbose luksOpen $freeloop persist_decrypted -
     _freeloop=$freeloop
     freeloop="/dev/mapper/persist_decrypted"
 fi
@@ -132,7 +132,7 @@ if [ -n "$config" ]; then
     rm -rf ./persist_tmp_mnt
 fi
 
-if [ ! -z "$passphrase" ]; then
+if [ -n "$passphrase" ]; then
     cryptsetup luksClose $freeloop
     freeloop=$_freeloop
 fi

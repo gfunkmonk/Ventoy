@@ -1,12 +1,12 @@
 #!/bin/sh
 
 if [ -n "$PKG_DATE" ]; then
-    plugson_verion=$PKG_DATE
+    plugson_version=$PKG_DATE
 else
-    plugson_verion=$(date '+%Y%m%d %H:%M:%S')
+    plugson_version=$(date '+%Y%m%d %H:%M:%S')
 fi
 
-sed "s#.*plugson_build_date.*#                <b id=\"plugson_build_date\">$plugson_verion</b>#" -i ./www/index.html
+sed "s#.*plugson_build_date.*#                <b id=\"plugson_build_date\">$plugson_version</b>#" -i ./www/index.html
 
 if [ ! -f ./vs/VentoyPlugson/Release/VentoyPlugson.exe ]; then
     echo "NO VentoyPlugson.exe found"
@@ -36,7 +36,7 @@ done
 ls -1 ../INSTALL/grub/menu/ | while read line; do 
     echo -n ${line:0:5} >> ./www/menulist
 done 
-echo -n "$plugson_verion" > ./www/buildtime
+echo -n "$plugson_version" > ./www/buildtime
 
 tar cf www.tar www
 xz --check=crc32 www.tar

@@ -67,9 +67,8 @@ if [ -f mkexfatfs_static ]; then
         mv mkexfatfs mkexfatfs_shared
         mv mkexfatfs_static mkexfatfs
     else
-        if ./mkexfatfs -V > /dev/null 2>&1; then
-            echo "mkexfatfs can not run, check static version" >> ./log.txt
-        else
+        if ! ./mkexfatfs -V > /dev/null 2>&1; then
+            echo "mkexfatfs cannot run, check static version" >> ./log.txt
             if ./mkexfatfs_static -V > /dev/null 2>&1; then
                 echo "Use static version of mkexfatfs" >> ./log.txt
                 mv mkexfatfs mkexfatfs_shared
@@ -84,9 +83,9 @@ chmod +x -R ./tool/$TOOLDIR
 
 
 if [ -f /bin/bash ]; then
-    /bin/bash ./tool/VentoyWorker.sh $*
+    /bin/bash ./tool/VentoyWorker.sh "$@"
 else
-    ash ./tool/VentoyWorker.sh $*
+    ash ./tool/VentoyWorker.sh "$@"
 fi
 
 if [ -n "$OLDDIR" ]; then 

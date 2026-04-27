@@ -377,7 +377,7 @@ elif [ "$MODE" = "install" -a -n "$NONDESTRUCTIVE" ]; then
     if [ $? -eq 0 ]; then
         if [ -z "$FORCE" ]; then
             vtwarn "$DISK already contains a Ventoy with version $version."
-            vtwarn "You can not do and don not need non-destructive installation."
+            vtwarn "You cannot do and do not need non-destructive installation."
             vtwarn ""
             exit 1
         fi

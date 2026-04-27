@@ -122,7 +122,7 @@ if echo $DISK | grep -q "[a-z]d[a-z][1-9]"; then
     DISK=${DISK:0:-1}
 fi
 
-if echo $DISK | grep -E -q "/dev/nvme|/dev/mmcblk/dev/nbd"; then
+if echo "$DISK" | grep -E -q "/dev/nvme|/dev/mmcblk|/dev/nbd"; then
     if echo $DISK | grep -q "p[1-9]$"; then
         DISK=${DISK:0:-2}
     fi
