@@ -23,7 +23,7 @@
 #pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" ) 
 
 #define SIZE_1MB   (1024 * 1024)
-#define VENTOY_EFI_PART_SIZE   (32 * SIZE_1MB)
+#define VENTOY_EFI_PART_SIZE   (1024 * SIZE_1MB)
 
 #define VENTOY_GUID { 0x77772020, 0x2e77, 0x6576, { 0x6e, 0x74, 0x6f, 0x79, 0x2e, 0x6e, 0x65, 0x74 }}
 
