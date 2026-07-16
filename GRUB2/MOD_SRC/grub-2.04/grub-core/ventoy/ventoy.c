@@ -49,6 +49,10 @@ int g_ventoy_debug = 0;
 static int g_efi_os = 0xFF;
 grub_uint32_t g_ventoy_plat_data;
 
+#ifdef GRUB_MACHINE_EFI
+static VTOY_SHIM *g_vtoy_shim = NULL;
+#endif
+
 void ventoy_debug(const char *fmt, ...)
 {
     va_list args;
@@ -298,9 +302,152 @@ void ventoy_memfile_env_set(const char *prefix, const void *buf, unsigned long l
     return;
 }
 
+#ifdef GRUB_MACHINE_EFI
+static void ventoy_get_uefi_version(char *str, grub_size_t len)
+{
+    grub_efi_uint8_t uefi_minor_1, uefi_minor_2;
+
+    uefi_minor_1 = (grub_efi_system_table->hdr.revision & 0xffff) / 10;
+    uefi_minor_2 = (grub_efi_system_table->hdr.revision & 0xffff) % 10;
+    grub_snprintf(str, len, "%d.%d", (grub_efi_system_table->hdr.revision >> 16), uefi_minor_1);
+    if (uefi_minor_2)
+        grub_snprintf(str, len, "%s.%d", str, uefi_minor_2);
+}
+
+static void ventoy_get_pi_version(char *str, grub_size_t len)
+{
+    grub_uint32_t data = 0;
+    grub_efi_uintn_t i = 0;
+    grub_efi_guid_t dxest =
+        { 0x05ad34ba, 0x6f02, 0x4214, {0x95, 0x2e, 0x4d, 0xa0, 0x39, 0x8e, 0x2b, 0xb9 } };
+
+    for (i = 0; i < grub_efi_system_table->num_table_entries; i++)
+    {
+        if (grub_memcmp(&dxest, &grub_efi_system_table->configuration_table[i].vendor_guid, 16) == 0)
+        {
+            grub_memcpy(&data, (char *)grub_efi_system_table->configuration_table[i].vendor_table + 8, 4);
+            break;
+        }
+    }
+
+    grub_snprintf(str, len, "%d.%d", (data >> 16) & 0xFFFF, (data & 0xFFFF) / 10);
+}
+
+int ventoy_set_sb_policy(void)
+{
+    const char *env = NULL;
+    static int set_once = 0;
+
+    /* no need when SecureBoot is disabled */
+    if (g_sys_sb == 0)
+    {
+        return 0;
+    }
+
+    /* can only set once */
+    if (set_once > 0)
+    {
+        return 0;
+    }
+    set_once = 1;
+
+    /* VTOY_SECURE_BOOT_POLICY only take affect once during init */
+    env = grub_env_get("VTOY_SECURE_BOOT_POLICY");
+    if (env)
+    {
+        g_sb_policy = (grub_uint8_t)(env[0] - '0');
+    }
+
+    if (g_sb_policy == VTOY_SB_POLICY_BYPASS)
+    {
+        if (g_vtoy_shim && g_vtoy_shim->ByPassSB)
+        {
+            g_vtoy_shim->ByPassSB();
+        }
+    }
+    else if (g_sb_policy == VTOY_SB_POLICY_CHECK)
+    {
+        if (g_vtoy_shim && g_vtoy_shim->CheckSB)
+        {
+            g_vtoy_shim->CheckSB();
+        }
+    }
+
+    return 0;
+}
+
+static void ventoy_get_uefi_sb(void)
+{
+    grub_uint8_t secure_boot = 0;
+    grub_uint8_t setup_mode = 0;
+    grub_uint8_t *var = NULL;
+    grub_size_t size = 0;
+    grub_efi_guid_t global = GRUB_EFI_GLOBAL_VARIABLE_GUID;
+
+    var = grub_efi_get_variable("SecureBoot", &global, &size);
+    if (var && size == 1 && *var == 1)
+    {
+        secure_boot = 1;
+    }
+    grub_check_free(var);
+
+    size = 0;
+    var = grub_efi_get_variable("SetupMode", &global, &size);
+    if (var && size == 1 && *var == 1)
+    {
+        setup_mode = 1;
+    }
+
+    if (secure_boot == 1 && setup_mode == 0)
+    {
+        g_sys_sb = 1;
+    }
+
+    grub_check_free(var);
+}
+
+static int ventoy_secure_boot_init(void)
+{
+    grub_efi_guid_t ProtGuid = VTOY_SHIM_POLICY_GUID;
+
+    ventoy_get_uefi_sb();
+
+    if (g_sys_sb == 0)
+    {
+        return 0;
+    }
+
+
+    if (g_ventoy_plat_data == VTOY_PLAT_X86_64_UEFI)
+    {
+        g_vtoy_shim = grub_efi_locate_protocol(&ProtGuid, NULL);
+        if (g_vtoy_shim == NULL || g_vtoy_shim->ByPassSB == NULL ||
+            g_vtoy_shim->CheckSB == NULL || g_vtoy_shim->Launched == NULL)
+        {
+            /*
+             * Generally when SecureBoot enabled, Ventoy grub must be launched by Ventoy Shim.
+             * But there are some exceptions:
+             *   1. Ventoy key was enrolled directly to the UEFI DB
+             *   2. Some UEFI firmware (MSI) has Image Execution Policy as Always Execute which
+             *      means Secure Boot is effectively disabled.
+             */
+        }
+        else
+        {
+            g_vtoy_shim->Launched();
+        }
+    }
+
+    return 0;
+}
+
+
+#endif
+
 static int ventoy_arch_mode_init(void)
 {
     #ifdef GRUB_MACHINE_EFI
+
     if (grub_strcmp(GRUB_TARGET_CPU, "i386") == 0)
     {
         g_ventoy_plat_data = VTOY_PLAT_I386_UEFI;
@@ -329,19 +476,6 @@ static int ventoy_arch_mode_init(void)
     return 0;
 }
 
-#ifdef GRUB_MACHINE_EFI
-static void ventoy_get_uefi_version(char *str, grub_size_t len)
-{
-    grub_efi_uint8_t uefi_minor_1, uefi_minor_2;
-
-    uefi_minor_1 = (grub_efi_system_table->hdr.revision & 0xffff) / 10;
-    uefi_minor_2 = (grub_efi_system_table->hdr.revision & 0xffff) % 10;
-    grub_snprintf(str, len, "%d.%d", (grub_efi_system_table->hdr.revision >> 16), uefi_minor_1);
-    if (uefi_minor_2)
-        grub_snprintf(str, len, "%s.%d", str, uefi_minor_2);
-}
-#endif
-
 static int ventoy_calc_totalmem(grub_uint64_t addr, grub_uint64_t size, grub_memory_type_t type, void *data)
 {
     grub_uint64_t *total_mem = (grub_uint64_t *)data;
@@ -367,8 +501,12 @@ static int ventoy_hwinfo_init(void)
 #ifdef GRUB_MACHINE_EFI
     ventoy_get_uefi_version(str, sizeof(str));
     ventoy_env_export("grub_uefi_version", str);
+
+    ventoy_get_pi_version(str, sizeof(str));
+    ventoy_env_export("grub_pi_version", str);
 #else
     ventoy_env_export("grub_uefi_version", "NA");
+    ventoy_env_export("grub_pi_version", "NA");
 #endif
 
     return 0;
@@ -497,6 +635,11 @@ GRUB_MOD_INIT(ventoy)
     ventoy_hwinfo_init();
     ventoy_env_init();
     ventoy_arch_mode_init();
+
+#ifdef GRUB_MACHINE_EFI
+    ventoy_secure_boot_init();
+#endif
+
     ventoy_register_all_cmd();
 }
 
