@@ -186,7 +186,7 @@ if [ "$MODE" = "install" -a -z "$NONDESTRUCTIVE" ]; then
     else
         if parted -v > /dev/null 2>&1; then
             PARTTOOL='parted'            
-        elif fdisk -v >/dev/null 2>&1; then
+        elif command -v fdisk > /dev/null 2>&1; then
             PARTTOOL='fdisk'            
         else
             vterr "Both parted and fdisk are not found in the system, Ventoy can't create new partitions."
@@ -314,16 +314,16 @@ if [ "$MODE" = "install" -a -z "$NONDESTRUCTIVE" ]; then
     wait_and_create_part ${PART1} ${PART2}    
     if [ -b ${PART1} ]; then
         vtinfo "Format partition 1 ${PART1} ..."
-        mkexfatfs -n "$VTNEW_LABEL" -s $cluster_sectors ${PART1}
+        mkfs.exfat -n "$VTNEW_LABEL" -s $cluster_sectors ${PART1}
         if [ $? -ne 0 ]; then
-            echo "mkexfatfs failed, now retry..."
-            mkexfatfs -n "$VTNEW_LABEL" -s $cluster_sectors ${PART1}
+            echo "mkfs.exfat failed, now retry..."
+            mkfs.exfat -n "$VTNEW_LABEL" -s $cluster_sectors ${PART1}
             if [ $? -ne 0 ]; then
-                echo "######### mkexfatfs failed, exit ########"
+                echo "######### mkfs.exfat failed, exit ########"
                 exit 1
             fi
         else
-            echo "mkexfatfs success"
+            echo "mkfs.exfat success"
         fi        
     else
         vterr "${PART1} NOT exist"
