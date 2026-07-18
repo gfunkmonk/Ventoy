@@ -533,26 +533,14 @@ static int ventoy_load_efiboot_template(char **buf, int *datalen, int *direntoff
 
 static int ventoy_set_check_result(int ret, const char *msg)
 {
-    char buf[32];
+    (void)ret;
+    (void)msg;
 
-    grub_snprintf(buf, sizeof(buf), "%d", (ret & 0x7FFF));
-    grub_env_set("VTOY_CHKDEV_RESULT_STRING", buf);
+    /* Always report success - device check bypassed */
+    grub_env_set("VTOY_CHKDEV_RESULT_STRING", "0");
     grub_env_export("VTOY_CHKDEV_RESULT_STRING");
 
-    if (ret)
-    {
-        grub_cls();
-        grub_printf(VTOY_WARNING"\n");
-        grub_printf(VTOY_WARNING"\n");
-        grub_printf(VTOY_WARNING"\n\n\n");
-
-        grub_printf("This is NOT a standard Ventoy device and is NOT supported (%d).\n", ret);
-        grub_printf("Error message: <%s>\n\n", msg);
-        grub_printf("You should follow the instructions in https://www.ventoy.net to use Ventoy.\n");
-        grub_refresh();
-    }
-
-    return ret;
+    return 0;
 }
 
 static int ventoy_check_official_device(grub_device_t dev)

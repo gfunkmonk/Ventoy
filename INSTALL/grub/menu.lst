@@ -1,0 +1,45 @@
+default 0
+timeout 25
+
+color 11 12 13 14
+# Clasic Menu AutoNumber
+write 0x8274 0x2001
+gfxmenu /GRUB/KOYLU.GFX
+font /EFI/grub/unifont.hex
+setmenu --lang=tr
+title Boot From Hard Disk\n Boot MBR of Second Hard Disk
+# Only for usb
+if %@root:~1,3%==hd0 && geometry (hd1) && map --unhook && map (hd0) (hd1) && map (hd1) (hd0) && map --hook
+chainloader (hd0)+1 || chainloader ()+1 || chainloader ()
+boot
+title
+root
+title Win iso  WinPe iso Kurulumu (iso ismi:Win.iso)
+find --set-root --ignore-floppies --ignore-cd /Win.ISO
+map /Win.ISO (0xff)
+map --hook
+chainloader (0xff)
+savedefault --wait=2
+boot
+title
+root
+title Ventoy Boot Menü
+chainloader (hd0)+1 || chainloader ()+1 || chainloader ()
+boot
+title
+root
+title Grub2 File Manager 
+map --mem /efi/boot/grubfm.iso (0xff)
+map --hook
+chainloader (0xff)
+title
+root
+title Sistemi Yeniden  Başlat
+savedefault --wait=2
+reboot
+title
+root
+title Bilgisayarı şimdi Kapat
+halt
+
+

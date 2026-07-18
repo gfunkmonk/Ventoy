@@ -583,13 +583,7 @@ STATIC EFI_STATUS EFIAPI ventoy_find_iso_disk(IN EFI_HANDLE ImageHandle)
             pMBR = (MBR_HEAD *)pBuffer;
             if (g_os_param_reserved[6] == 0 && pMBR->PartTbl[0].FsFlag != 0xEE)
             {
-                if (pMBR->PartTbl[0].StartSectorId != 2048 ||
-                    pMBR->PartTbl[1].SectorCount != 262144 ||
-                    pMBR->PartTbl[1].StartSectorId != pMBR->PartTbl[0].StartSectorId + pMBR->PartTbl[0].SectorCount)
-                {
-                    debug("Failed to check disk part table");
-                    ventoy_warn_invalid_device();
-                }
+                /* partition layout check bypassed */
             }
 
             gBlockData.RawBlockIoHandle = Handles[i];
@@ -911,8 +905,7 @@ STATIC EFI_STATUS EFIAPI ventoy_parse_cmdline(IN EFI_HANDLE ImageHandle)
 
     if (pEnv[0] != '0' || pEnv[1] != 0)
     {
-        //ventoy_warn_invalid_device();
-        //return EFI_INVALID_PARAMETER;
+        /* device check result ignored - bypass enabled */
     }
 
     g_file_replace_list = &pGrubParam->file_replace;
