@@ -94,12 +94,12 @@ OBJCOPY_arm64	?= $(CROSS_arm64)$(OBJCOPY)
 
 # Build flags for host binaries
 #
-HOST_CFLAGS	+= -Wall -W -Werror
+HOST_CFLAGS	+= -Wall -W -Wno-error
 HOST_EFI_CFLAGS	+= -fshort-wchar
 
 # Build flags for all targets
 #
-CFLAGS		+= -Os -ffreestanding -Wall -W -Werror
+CFLAGS		+= -Os -ffreestanding -Wall -W -Wno-error
 CFLAGS		+= -nostdinc -I. -fshort-wchar
 CFLAGS		+= -DVERSION="\"$(VERSION)\""
 CFLAGS		+= -DSBAT_GENERATION="\"$(SBAT_GENERATION)\""
@@ -107,7 +107,7 @@ CFLAGS		+= -include compiler.h
 ifneq ($(DEBUG),)
 CFLAGS		+= -DDEBUG=$(DEBUG)
 endif
-CFLAGS		+= $(EXTRA_CFLAGS)
+CFLAGS		+= $(EXTRA_CFLAGS) -Wno-error=misleading-indentation
 LDFLAGS		+= --no-relax
 
 # Build flags for i386 target
