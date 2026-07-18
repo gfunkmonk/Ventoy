@@ -170,6 +170,10 @@ cd ../../
 cp $OPT ./ventoy   $tmpmnt/
 cp $OPT ./EFI   $tmpmnt/
 cp $OPT ./tool/ENROLL_THIS_KEY_IN_MOKMANAGER.cer $tmpmnt/
+cp $OPT ./Boot   $tmpmnt/
+cp $OPT ./bootmgr $tmpmnt/
+cp $OPT ./grldr $tmpmnt/
+cp $OPT ./grldr.mbr $tmpmnt/
 
 
 mkdir -p $tmpmnt/tool
@@ -259,7 +263,7 @@ dos2unix -q $tmpdir/ExtendPersistentImg.sh
 cp $OPT ../LinuxGUI/WebUI $tmpdir/
 sed 's/.*SCRIPT_DEL_THIS \(.*\)/\1/g' -i $tmpdir/WebUI/index.html
 
-#32MB disk img
+#128MB disk img
 dd status=none if=$LOOP of=$tmpdir/ventoy/ventoy.disk.img bs=512 count=$VENTOY_SECTOR_NUM skip=$part2_start_sector
 
 

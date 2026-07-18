@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#Ventoy partition 32MB
-VENTOY_PART_SIZE=33554432
-VENTOY_PART_SIZE_MB=32
+#Ventoy partition 128MB
+VENTOY_PART_SIZE=134217728
+VENTOY_PART_SIZE_MB=128
 VENTOY_SECTOR_SIZE=512
-VENTOY_SECTOR_NUM=65536
+VENTOY_SECTOR_NUM=262144
 
 ventoy_false() {
     [ "1" = "2" ]
@@ -379,7 +379,7 @@ EOF
     for i in 0 1 2 3 4 5 6 7 8 9; do
         check_umount_disk "$PART2"
 
-        if mkfs.vfat -F 16 -n VTOYEFI -s 1 $PART2; then
+        if mkfs.vfat -F 16 -n VTOYEFI -s 4 $PART2; then
             echo 'success'
             break
         else
@@ -497,7 +497,7 @@ format_ventoy_disk_gpt() {
     for i in 0 1 2 3 4 5 6 7 8 9; do
         check_umount_disk "$PART2"
         
-        if mkfs.vfat -F 16 -n VTOYEFI -s 1 $PART2; then
+        if mkfs.vfat -F 16 -n VTOYEFI -s 4 $PART2; then
             echo 'success'
             break
         else
