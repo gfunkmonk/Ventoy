@@ -463,36 +463,6 @@ EFI_STATUS EFIAPI ventoy_delete_variable(VOID)
     return Status;
 }
 
-#if (VENTOY_DEVICE_WARN != 0)
-STATIC VOID ventoy_warn_invalid_device(VOID)
-{
-    STATIC BOOLEAN flag = FALSE;
-
-    if (flag)
-    {
-        return;
-    }
-
-    flag = TRUE;
-    gST->ConOut->ClearScreen(gST->ConOut);
-    gST->ConOut->OutputString(gST->ConOut, VTOY_WARNING L"\r\n");
-    gST->ConOut->OutputString(gST->ConOut, VTOY_WARNING L"\r\n");
-    gST->ConOut->OutputString(gST->ConOut, VTOY_WARNING L"\r\n\r\n\r\n");
-
-    gST->ConOut->OutputString(gST->ConOut, L"This is NOT a standard Ventoy device and is NOT supported.\r\n\r\n");
-    gST->ConOut->OutputString(gST->ConOut, L"You should follow the official instructions in https://www.ventoy.net\r\n");
-
-    gST->ConOut->OutputString(gST->ConOut, L"\r\n\r\nWill exit after 10 seconds ...... ");
-
-    sleep(10);
-}
-#else
-STATIC VOID ventoy_warn_invalid_device(VOID)
-{
-
-}
-#endif
-
 STATIC EFI_STATUS EFIAPI ventoy_load_image
 (
     IN EFI_HANDLE ImageHandle,
