@@ -2549,9 +2549,9 @@ int PartitionResizeForVentoy(PHY_DRIVE_INFO *pPhyDrive)
 
 		pMBR->BootCode[92] = 0x22;
 
-		// to fix windows issue
+        // Use ESP GUID so firmware recognizes partition as EFI bootable
         memset(pGPT->PartTbl + 1, 0, sizeof(VTOY_GPT_PART_TBL));
-		memcpy(&(pGPT->PartTbl[1].PartType), &WindowsDataPartType, sizeof(GUID));
+        memcpy(&(pGPT->PartTbl[1].PartType), &EspPartType, sizeof(GUID));
 		CoCreateGuid(&(pGPT->PartTbl[1].PartGuid));
 
 		pGPT->PartTbl[1].StartLBA = pGPT->PartTbl[0].LastLBA + 1;
