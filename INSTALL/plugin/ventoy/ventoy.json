@@ -1,287 +1,249 @@
 {
-    "control": [
-        { "VTOY_DEFAULT_MENU_MODE": "1" },
-        { "VTOY_FILT_DOT_UNDERSCORE_FILE": "1" }        
-    ],
-    
-    "theme": {
-        "file":[
-            "/ventoy/purple-theme/theme.txt",
-            "/ventoy/purple-theme/theme_legacy.txt"
-        ],
-        "display_mode": "GUI",
-        "default_file": 1,
-        "resolution_fit": 1,
-        "gfxmode": "1920x1080"
-    },
-    
-    
-    "menu_class":[
-        {
-            "key": "4MLinux",
-            "class": "4MLinux"
-        },
-        {
-            "key": "Alpine",
-            "class": "AlpineLinux"
-        },
-        {
-            "key": "Android",
-            "class": "android"
-        },
-        {
-            "key": "Anonymous",
-            "class": "anonymous"
-        },
-        {
-            "key": "Antergos",
-            "class": "antergos"
-        },
-        {
-            "key": "Arch",
-            "class": "arch"
-        },
-        {
-            "key": "Archcraft",
-            "class": "archcraft"
-        },
-        {
-            "key": "Artix",
-            "class": "artix"
-        },
-        {
-            "key": "Chakra",
-            "class": "chakra"
-        },
-        {
-            "key": "CentOS",
-            "class": "centos"
-        },
-        {
-            "key": "Debian",
-            "class": "debian"
-        },
-        {
-            "key": "Deepin",
-            "class": "deepin"
-        },
-        {
-            "key": "Devuan",
-            "class": "devuan"
-        },
-        {
-            "key": "edit",
-            "class": "edit"
-        },
-        {
-            "key": "efi",
-            "class": "efi"
-        },
-        {
-            "key": "Elementary",
-            "class": "elementary"
-        },
-        {
-            "key": "Endeavour",
-            "class": "endeavouros"
-        },
-        {
-            "key": "Fedora",
-            "class": "fedora"
-        },
-        {
-            "key": "find.efi",
-            "class": "find.efi"
-        },
-        {
-            "key": "find.none",
-            "class": "find.none"
-        },
-        {
-            "key": "FreeBSD",
-            "class": "freebsd"
-        },
-        {
-            "key": "gpart",
-            "class": "gpart"
-        },
-        {
-            "key": "Gentoo",
-            "class": "gentoo"
-        },
-        {
-            "key": "gnu-linux",
-            "class": "gnu-linux"
-        },
-        {
-            "key": "Haiku",
-            "class": "haiku"
-        },
-        {
-            "key": "help",
-            "class": "help"
-        },
-        {
-            "key": "kbd",
-            "class": "kbd"
-        },
-        {
-            "key": "kaos",
-            "class": "kaos"
-        },
-        {
-            "key": "kernel",
-            "class": "kernel"
-        },
-        {
-            "key": "Kubuntu",
-            "class": "kubuntu"
-        },
-        {
-            "key": "Lubuntu",
-            "class": "lubuntu"
-        },
-        {
-            "key": "Mint",
-            "class": "linuxmint"
-        },
-        {
-            "key": "MacOS",
-            "class": "macosx"
-        },
-        {
-            "key": "macOS",
-            "class": "macosx"
-        },
-        {
-            "key": "Mageia",
-            "class": "mageia"
-        },
-        {
-            "key": "Manjaro",
-            "class": "manjaro"
-        },
-        {
-            "key": "MX",
-            "class": "mx-linux"
-        },
-        {
-            "key": "Neon",
-            "class": "neon"
-        },
-        {
-            "key": "NixOS",
-            "class": "nixos"
-        },
-        {
-            "key": "OpenSUSE",
-            "class": "opensuse"
-        },
-        {
-            "key": "Parrot",
-            "class": "parrot"
-        },
-        {
-            "key": "Pop-OS",
-            "class": "pop"
-        },
-        {
-            "key": "recovery",
-            "class": "recovery"
-        },
-        {
-            "key": "regolith",
-            "class": "regolith"
-        },
-        {
-            "key": "restart",
-            "class": "restart"
-        },
-        {
-            "key": "shutdown",
-            "class": "shutdown"
-        },
-        {
-            "key": "siduction",
-            "class": "siduction"
-        },
-        {
-            "key": "solus",
-            "class": "solus"
-        },
-        {
-            "key": "SteamOS",
-            "class": "steamos"
-        },
-        {
-            "key": "submenu",
-            "class": "submenu"
-        },
-        {
-            "key": "SystemRescueCD",
-            "class": "SystemRescueCD"
-        },
-        {
-            "key": "type",
-            "class": "type"
-        },
-        {
-            "key": "tz",
-            "class": "tz"
-        },
-        {
-            "key": "Ubuntu",
-            "class": "ubuntu"
-        },
-        {
-            "key": "unset",
-            "class": "unset"
-        },
-        {
-            "key": "Void",
-            "class": "void"
-        },
-        {
-            "key": "Win",
-            "class": "windows"
-        },
-        {
-            "key": "Xubuntu",
-            "class": "xubuntu"
-        },
-        {
-            "key": "Zorin",
-            "class": "zorin"
-        }
-    ],
-    
-    "menu_alias": [
-        {
-            "image": "/ISO/MX-19.1_x64.iso",
-            "alias": "MX 19.1 ISO file For me"
-        },
-        {
-            "image": "/cn_windows_10_enterprise_ltsc_2019_x64_dvd_9c09ff24.iso",
-            "alias": "我的 Windows 10 系统"
-        }
-    ],
-    
-    "auto_install": [
-        {
-            "image": "/ISO/cn_windows_10.iso",
-            "template": "/ventoy/script/windows_unattended.cfg"
-        },
-        {
-            "image": "/ISO/cn_windows_server_2012_r2_vl_x64_dvd_2979220.iso",
-            "template": [
-                "/ventoy/script/windows_unattended1.xml",
-                "/ventoy/script/windows_unattended2.xml",
-                "/ventoy/script/windows_unattended3.xml",
-                "/ventoy/script/windows_unattended4.xml",
-                "/ventoy/script/windows_unattended5.xml",
-                "/ventoy/script/windows_unattended6.xml"
-            ]
-        }
-    ]
-    
+   "theme":{
+      "file":[
+         "/ventoy/purple-theme/theme.txt",
+         "/ventoy/purple-theme/theme_legacy.txt"
+      ],
+      "default_file":1,
+      "resolution_fit":1,
+      "gfxmode":"1920x1080"
+   },
+   "menu_class":[
+      {
+         "key":"4MLinux",
+         "class":"4MLinux"
+      },
+      {
+         "key":"Alpine",
+         "class":"AlpineLinux"
+      },
+      {
+         "key":"Android",
+         "class":"android"
+      },
+      {
+         "key":"Anonymous",
+         "class":"anonymous"
+      },
+      {
+         "key":"Antergos",
+         "class":"antergos"
+      },
+      {
+         "key":"Arch",
+         "class":"arch"
+      },
+      {
+         "key":"Archcraft",
+         "class":"archcraft"
+      },
+      {
+         "key":"Artix",
+         "class":"artix"
+      },
+      {
+         "key":"Chakra",
+         "class":"chakra"
+      },
+      {
+         "key":"CentOS",
+         "class":"centos"
+      },
+      {
+         "key":"Debian",
+         "class":"debian"
+      },
+      {
+         "key":"Deepin",
+         "class":"deepin"
+      },
+      {
+         "key":"Devuan",
+         "class":"devuan"
+      },
+      {
+         "key":"edit",
+         "class":"edit"
+      },
+      {
+         "key":"efi",
+         "class":"efi"
+      },
+      {
+         "key":"Elementary",
+         "class":"elementary"
+      },
+      {
+         "key":"Endeavour",
+         "class":"endeavouros"
+      },
+      {
+         "key":"Fedora",
+         "class":"fedora"
+      },
+      {
+         "key":"find.efi",
+         "class":"find.efi"
+      },
+      {
+         "key":"find.none",
+         "class":"find.none"
+      },
+      {
+         "key":"FreeBSD",
+         "class":"freebsd"
+      },
+      {
+         "key":"gpart",
+         "class":"gpart"
+      },
+      {
+         "key":"Gentoo",
+         "class":"gentoo"
+      },
+      {
+         "key":"gnu-linux",
+         "class":"gnu-linux"
+      },
+      {
+         "key":"Haiku",
+         "class":"haiku"
+      },
+      {
+         "key":"help",
+         "class":"help"
+      },
+      {
+         "key":"kbd",
+         "class":"kbd"
+      },
+      {
+         "key":"kaos",
+         "class":"kaos"
+      },
+      {
+         "key":"kernel",
+         "class":"kernel"
+      },
+      {
+         "key":"Kubuntu",
+         "class":"kubuntu"
+      },
+      {
+         "key":"Lubuntu",
+         "class":"lubuntu"
+      },
+      {
+         "key":"Mint",
+         "class":"linuxmint"
+      },
+      {
+         "key":"MacOS",
+         "class":"macosx"
+      },
+      {
+         "key":"macOS",
+         "class":"macosx"
+      },
+      {
+         "key":"Mageia",
+         "class":"mageia"
+      },
+      {
+         "key":"Manjaro",
+         "class":"manjaro"
+      },
+      {
+         "key":"MX",
+         "class":"mx-linux"
+      },
+      {
+         "key":"Neon",
+         "class":"neon"
+      },
+      {
+         "key":"NixOS",
+         "class":"nixos"
+      },
+      {
+         "key":"OpenSUSE",
+         "class":"opensuse"
+      },
+      {
+         "key":"Parrot",
+         "class":"parrot"
+      },
+      {
+         "key":"Pop-OS",
+         "class":"pop"
+      },
+      {
+         "key":"recovery",
+         "class":"recovery"
+      },
+      {
+         "key":"regolith",
+         "class":"regolith"
+      },
+      {
+         "key":"restart",
+         "class":"restart"
+      },
+      {
+         "key":"shutdown",
+         "class":"shutdown"
+      },
+      {
+         "key":"siduction",
+         "class":"siduction"
+      },
+      {
+         "key":"solus",
+         "class":"solus"
+      },
+      {
+         "key":"SteamOS",
+         "class":"steamos"
+      },
+      {
+         "key":"submenu",
+         "class":"submenu"
+      },
+      {
+         "key":"SystemRescueCD",
+         "class":"SystemRescueCD"
+      },
+      {
+         "key":"type",
+         "class":"type"
+      },
+      {
+         "key":"tz",
+         "class":"tz"
+      },
+      {
+         "key":"Ubuntu",
+         "class":"ubuntu"
+      },
+      {
+         "key":"unset",
+         "class":"unset"
+      },
+      {
+         "key":"Void",
+         "class":"void"
+      },
+      {
+         "key":"Win",
+         "class":"windows"
+      },
+      {
+         "key":"Xubuntu",
+         "class":"xubuntu"
+      },
+      {
+         "key":"Zorin",
+         "class":"zorin"
+      }
+   ]
 }

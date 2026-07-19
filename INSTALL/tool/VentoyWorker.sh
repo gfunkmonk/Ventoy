@@ -358,23 +358,6 @@ if [ "$MODE" = "install" -a -z "$NONDESTRUCTIVE" ]; then
     vtinfo "sync data ..."
     sync
 
-    # Copy ventoy_grub.cfg to /ventoy/ on partition 1
-    vtinfo "Copying ventoy_grub.cfg to partition 1 ..."
-    sleep 2
-    partprobe ${DISK} 2>/dev/null || true
-    mkdir -p ./tmp_mnt
-    mount ${PART1} ./tmp_mnt
-    if [ $? -eq 0 ]; then
-        mkdir -p ./tmp_mnt/ventoy
-        cp ./ventoy_grub.cfg ./tmp_mnt/ventoy/
-        sync
-        umount ./tmp_mnt
-        vtinfo "ventoy_grub.cfg copied successfully."
-    else
-        vterr "Failed to mount ${PART1} (exit $?) - ventoy_grub.cfg not copied"
-    fi
-    rm -rf ./tmp_mnt
-
     vtinfo "esp partition processing ..."
 
     if [ "$SECUREBOOT" != "YES" ]; then 
