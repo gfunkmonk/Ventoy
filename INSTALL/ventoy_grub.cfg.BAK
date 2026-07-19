@@ -1,0 +1,36 @@
+if [ -e ${vtoy_efi_part}/efi/boot/grubfmx64.efi ]; then
+ menuentry "Load GrubFM" --class=custom {
+ if [ "${grub_platform}_${grub_cpu}" = "pc_i386" ]; then
+     linux ${vtoy_efi_part}/efi/boot/loadfm
+     initrd ${vtoy_efi_part}/efi/boot/grubfm.iso
+ else
+		chainloader ${vtoy_efi_part}/efi/boot/grubfm${VTOY_EFI_ARCH}.efi
+ fi    
+ }
+
+ fi
+
+if [ "$grub_platform" = "pc" ]; then
+    menuentry "grub4dos" --class G4D {
+        if search -n -s -f /grldr; then
+            ntldr /grldr
+        else
+            echo "Grub4dos NOT found ..."
+        fi        
+    }   
+else
+    menuentry "grub4dos (UEFI Mode)" --class uefi {   
+        if search -n -s -f /efi/boot/g4dos${VTOY_EFI_ARCH}.efi; then
+            terminal_output  console
+            chainloader /efi/boot/boot${VTOY_EFI_ARCH}.efi
+            boot
+        else
+            echo "g4dos${VTOY_EFI_ARCH}.EFI NOT found ..."
+        fi        
+    }
+fi
+
+ menuentry '<-- Return to previous menu [Esc]' --class=vtoyret VTOY_RET {
+     echo 'Return …'
+ }
+ 

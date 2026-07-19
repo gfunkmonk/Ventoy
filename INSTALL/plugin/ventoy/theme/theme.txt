@@ -48,7 +48,7 @@ terminal-box: "terminal_box_*.png"
     top = 95%
     width = 10%
     height = 25
-    + label {text = "@VTOY_HOTKEY_TIP@" color = "blue" align = "left"} 
+    + label {text = "@VTOY_HOTKEY_TIP@" color = "white" align = "left"} 
 }
 
 
