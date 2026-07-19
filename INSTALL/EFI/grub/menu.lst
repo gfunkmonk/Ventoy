@@ -5,7 +5,7 @@ font --font-high=24 /EFI/grub/font24
 font /EFI/grub/unifont.hex
 splashimage /efi/grub/background.jpg
 setmenu --ver-off
-setmenu --lang=tr
+setmenu --lang=en
 setmenu --auto-num-on
 setmenu --triangle-off
 setmenu --highlight-full
@@ -21,7 +21,7 @@ title Choose and press ENTER/Seçin ve ENTER tuşuna basın
   pause --wait=0
   title
 root
-title Windows 7/8.1/10 HDD Boot \n Hdd Üzerinde Windows 7/8.1/10 Yüklü Herhangi Bir Sistem Varsa Bulun Ve Açın...
+title Windows 7/8.1/10 HDD Boot \n Locate and boot up any system with Windows 7, 8.1, or 10 installed on the HDD....
   find --set-root --ignore-floppies --ignore-cd /EFI/Microsoft/Boot/bootmgfw.efi
   chainloader /EFI/Microsoft/Boot/bootmgfw.efi
   savedefault --wait=2
@@ -43,9 +43,9 @@ chainloader /EFI/boot/grubfmia32.efi
 boot 
 title
 root
-title Sistemi Yeniden  Başlat \n Restart Pc..
+title Restart the system \n Restart Pc..
 reboot
 title
 root
-title Bilgisayarı şimdi Kapat \n Pc Halt..
+title Shutdown the computer \n Pc Halt..
 halt

@@ -6,7 +6,7 @@ color 11 12 13 14
 write 0x8274 0x2001
 gfxmenu /GRUB/KOYLU.GFX
 font /EFI/grub/unifont.hex
-setmenu --lang=tr
+setmenu --lang=en
 title Boot From Hard Disk\n Boot MBR of Second Hard Disk
 # Only for usb
 if %@root:~1,3%==hd0 && geometry (hd1) && map --unhook && map (hd0) (hd1) && map (hd1) (hd0) && map --hook
@@ -14,7 +14,7 @@ chainloader (hd0)+1 || chainloader ()+1 || chainloader ()
 boot
 title
 root
-title Win iso  WinPe iso Kurulumu (iso ismi:Win.iso)
+title Win iso  WinPe iso (Win.iso)
 find --set-root --ignore-floppies --ignore-cd /Win.ISO
 map /Win.ISO (0xff)
 map --hook
@@ -23,7 +23,7 @@ savedefault --wait=2
 boot
 title
 root
-title Ventoy Boot Menü
+title Ventoy Boot Menu
 chainloader (hd0)+1 || chainloader ()+1 || chainloader ()
 boot
 title
@@ -34,12 +34,12 @@ map --hook
 chainloader (0xff)
 title
 root
-title Sistemi Yeniden  Başlat
+title Restart the system
 savedefault --wait=2
 reboot
 title
 root
-title Bilgisayarı şimdi Kapat
+title Turn off the computer now
 halt
 
 
