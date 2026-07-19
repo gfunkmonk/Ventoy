@@ -2308,6 +2308,24 @@ End:
             }
         }
 
+        /* Copy plugin/ventoy folder to /ventoy/ on partition 1 */
+        if (state && MountDrive)
+        {
+            CHAR szCmd[MAX_PATH * 2];
+            snprintf(szCmd, sizeof(szCmd),
+                "xcopy .\\plugin\\ventoy %C:\\ventoy\\ /E /I /Y /Q",
+                MountDrive);
+            Log("Copying ventoy folder to %C:\\ventoy\\ ...", MountDrive);
+            if (0 == system(szCmd))
+            {
+                Log("ventoy folder copied successfully.");
+            }
+            else
+            {
+                Log("Failed to copy ventoy folder, error:%u", GetLastError());
+            }
+        }
+
         Log("OK\n");
     }
     else
