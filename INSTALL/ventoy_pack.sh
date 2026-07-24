@@ -177,7 +177,6 @@ cp $OPT ./grldr.mbr $tmpmnt/
 cp $OPT ./boot7 $tmpmnt/
 cp $OPT ./boot0 $tmpmnt/
 cp $OPT ./boot1f32 $tmpmnt/
-cp $OPT ./xorboot.bin $tmpmnt/
 
 
 mkdir -p $tmpmnt/tool
