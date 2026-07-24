@@ -21,13 +21,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      # Read the version BEFORE the build runs — the build may modify grub.cfg.
+      # grub.cfg contains:  set VENTOY_VERSION="1.1.16"
+      - name: Extract Ventoy version
+        id: version
+        run: |
+          VER=$(grep 'set VENTOY_VERSION=' INSTALL/grub/grub.cfg \
+                | awk -F'"' '{print $2}' \
+                | head -1)
+          if [ -z "$VER" ]; then
+            echo "::error::Could not extract VENTOY_VERSION from grub.cfg"
+            exit 1
+          fi
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "Ventoy version: $VER"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
       # Cache the Docker layer store between runs.
-      # The cache key rotates when the Dockerfile changes; older keys are
-      # used as fallback restore sources so the first build after a change
-      # still benefits from partially-matching layers.
+      # Key rotates when Dockerfile changes; older keys used as fallback.
       - name: Cache Docker layers
         uses: actions/cache@v6
         with:
@@ -42,28 +55,12 @@ jobs:
             --cache-from type=local,src=/tmp/.buildx-cache \
             --cache-to  type=local,dest=/tmp/.buildx-cache-new,mode=max \
             --load -t ventoy-ventoy .
-          # Rotate cache: replace old cache dir with the freshly-populated one
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      # --abort-on-container-exit makes the step fail if the build container
-      # exits with a non-zero code, rather than silently succeeding.
+      # --abort-on-container-exit ensures the step fails if the container exits non-zero
       - name: Run build inside container
         run: docker compose up --abort-on-container-exit --exit-code-from ventoy
-
-      # Extract the Ventoy version string that the build embedded in grub.cfg
-      # so we can use it as the release tag / artifact label.
-      - name: Extract Ventoy version
-        id: version
-        run: |
-          VER=$(grep 'set VENTOY_VERSION=' INSTALL/grub/grub.cfg \
-                | awk -F'"' '{print $2}' \
-                | head -1)
-          if [ -z "$VER" ]; then
-            echo "::warning::Could not extract VENTOY_VERSION from grub.cfg; defaulting to 'unknown'"
-            VER="unknown"
-          fi
-          echo "version=$VER" >> "$GITHUB_OUTPUT"
 
       # ── Artifacts ──────────────────────────────────────────────────────────
 
@@ -95,7 +92,7 @@ jobs:
           path: INSTALL/sha256.txt
           if-no-files-found: error
 
-      # Always capture the build log, even when the build step fails
+      # Always capture the build log, even when a prior step fails
       - name: Upload build log
         if: always()
         uses: actions/upload-artifact@v7
@@ -105,8 +102,7 @@ jobs:
           if-no-files-found: warn
 
       # ── GitHub Release (tag builds only) ──────────────────────────────────
-      # Publishes a draft release with all build artifacts attached.
-      # Draft = true so you can review and edit notes before making it public.
+      # Creates a draft release so you can review before publishing.
 
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
