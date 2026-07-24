@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <unistd.h>
 #ifdef VTOY_X86_64
+#undef __leaf
 #include <cpuid.h>
 #endif
 
