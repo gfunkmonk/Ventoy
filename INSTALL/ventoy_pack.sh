@@ -171,13 +171,17 @@ cp $OPT ./ventoy   $tmpmnt/
 cp $OPT ./EFI   $tmpmnt/
 cp $OPT ./tool/ENROLL_THIS_KEY_IN_MOKMANAGER.cer $tmpmnt/
 cp $OPT ./Boot   $tmpmnt/
+cp $OPT ./Clover   $tmpmnt/
 cp $OPT ./bootmgr $tmpmnt/
 cp $OPT ./grldr $tmpmnt/
 cp $OPT ./grldr.mbr $tmpmnt/
-cp $OPT ./boot7 $tmpmnt/
 cp $OPT ./boot0 $tmpmnt/
+cp $OPT ./boot2 $tmpmnt/
+cp $OPT ./boot6 $tmpmnt/
+cp $OPT ./boot7 $tmpmnt/
+cp $OPT ./boot8 $tmpmnt/
 cp $OPT ./boot1f32 $tmpmnt/
-
+cp $OPT ./PBR.bin $tmpmnt/
 
 mkdir -p $tmpmnt/tool
 # cp $OPT ./tool/i386/mount.exfat-fuse     $tmpmnt/tool/mount.exfat-fuse_i386
