@@ -27,12 +27,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      # Read the version BEFORE the build runs — the build may modify grub.cfg.
-      # grub.cfg contains:  set VENTOY_VERSION="1.1.16"
-      # Skip for Artifact builds (CI mode replaces version with date stamp).
-      - name: Extract Ventoy version
+      # Artifact: stamp grub.cfg with MMDDhhmm and use that as the version label
+      - name: Set version (Artifact)
+        if: github.event.inputs.build_type == 'Artifact'
+        id: version_artifact
+        run: |
+          VER=$(date +%m%d%H%M)
+          sed -i "s/VENTOY_VERSION=.*/VENTOY_VERSION=\"$VER\"/" INSTALL/grub/grub.cfg
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "Ventoy version: $VER"
+
+      # Release: read the real semantic version from grub.cfg before the build touches it
+      - name: Set version (Release)
         if: github.event.inputs.build_type == 'Release'
-        id: version
+        id: version_release
         run: |
           VER=$(grep 'set VENTOY_VERSION=' INSTALL/grub/grub.cfg \
                 | awk -F'"' '{print $2}' \
@@ -41,15 +49,6 @@ jobs:
             echo "::error::Could not extract VENTOY_VERSION from grub.cfg"
             exit 1
           fi
-          echo "version=$VER" >> "$GITHUB_OUTPUT"
-          echo "Ventoy version: $VER"
-
-      - name: CI Ventoy version
-        if: github.event.inputs.build_type == 'Artifact'
-        id: version
-        run: |
-          VER=$(date +%m%d%H%M)
-          sed "s/VENTOY_VERSION=.*/VENTOY_VERSION=\"$VER\"/"  -i .INSTALL/grub/grub.cfg
           echo "version=$VER" >> "$GITHUB_OUTPUT"
           echo "Ventoy version: $VER"
 
@@ -84,21 +83,21 @@ jobs:
       - name: Upload Windows package
         uses: actions/upload-artifact@v7
         with:
-          name: ventoy-${{ steps.version.outputs.version }}-windows
+          name: ventoy-${{ steps.version_artifact.outputs.version || steps.version_release.outputs.version }}-windows
           path: INSTALL/ventoy-*windows*
           if-no-files-found: error
 
       - name: Upload Linux package
         uses: actions/upload-artifact@v7
         with:
-          name: ventoy-${{ steps.version.outputs.version }}-linux
+          name: ventoy-${{ steps.version_artifact.outputs.version || steps.version_release.outputs.version }}-linux
           path: INSTALL/ventoy-*linux*
           if-no-files-found: error
 
       - name: Upload LiveCD package
         uses: actions/upload-artifact@v7
         with:
-          name: ventoy-${{ steps.version.outputs.version }}-livecd
+          name: ventoy-${{ steps.version_artifact.outputs.version || steps.version_release.outputs.version }}-livecd
           path: INSTALL/ventoy-*livecd*
           if-no-files-found: error
 
@@ -126,10 +125,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           draft: false
-          tag_name: v${{ steps.version.outputs.version }}
-          name: "Ventoy ${{ steps.version.outputs.version }}"
+          tag_name: v${{ steps.version_release.outputs.version }}
+          name: "Ventoy ${{ steps.version_release.outputs.version }}"
           body: |
-            ## Ventoy ${{ steps.version.outputs.version }}
+            ## Ventoy ${{ steps.version_release.outputs.version }}
 
             Built from commit ${{ github.sha }}.
 
