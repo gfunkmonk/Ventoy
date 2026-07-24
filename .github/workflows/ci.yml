@@ -1,49 +1,130 @@
 name: Ventoy CI
 
 on:
+  push:
+    tags:
+      - 'v*.*.*'
   workflow_dispatch:
+
+# Cancel any in-progress run for the same ref so stale builds don't queue up
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to create GitHub releases
+
     steps:
-    - uses: actions/checkout@v7
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v4
-    - name: Cache Docker layers
-      uses: actions/cache@v6
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile') }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
-    - name: Build Docker image with cache
-      run: |
-        docker buildx build \
-          --cache-from type=local,src=/tmp/.buildx-cache \
-          --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
-          --load -t ventoy-ventoy .
-        rm -rf /tmp/.buildx-cache
-        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-    - name: Run docker compose up
-      run: docker compose up
-    - uses: actions/upload-artifact@v7
-      with:
-        name: ventoy-windows
-        path: INSTALL/ventoy-*windows*
-    - uses: actions/upload-artifact@v7
-      with:
-        name: ventoy-linux
-        path: INSTALL/ventoy-*linux*
-    - uses: actions/upload-artifact@v7
-      with:
-        name: ventoy-livecd
-        path: INSTALL/ventoy-*livecd*
-    - uses: actions/upload-artifact@v7
-      with:
-        name: SHA256SUM
-        path: INSTALL/sha256.txt
-    - uses: actions/upload-artifact@v7
-      with:
-        name: xxx-build-log
-        path: DOC/build.log
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # Cache the Docker layer store between runs.
+      # The cache key rotates when the Dockerfile changes; older keys are
+      # used as fallback restore sources so the first build after a change
+      # still benefits from partially-matching layers.
+      - name: Cache Docker layers
+        uses: actions/cache@v6
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build Docker image
+        run: |
+          docker buildx build \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --cache-to  type=local,dest=/tmp/.buildx-cache-new,mode=max \
+            --load -t ventoy-ventoy .
+          # Rotate cache: replace old cache dir with the freshly-populated one
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      # --abort-on-container-exit makes the step fail if the build container
+      # exits with a non-zero code, rather than silently succeeding.
+      - name: Run build inside container
+        run: docker compose up --abort-on-container-exit --exit-code-from ventoy
+
+      # Extract the Ventoy version string that the build embedded in grub.cfg
+      # so we can use it as the release tag / artifact label.
+      - name: Extract Ventoy version
+        id: version
+        run: |
+          VER=$(grep -oP '(?<=ventoy_version=)[0-9]+\.[0-9]+\.[0-9]+' INSTALL/grub/grub.cfg 2>/dev/null \
+                || echo "unknown")
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+
+      # ── Artifacts ──────────────────────────────────────────────────────────
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v7
+        with:
+          name: ventoy-${{ steps.version.outputs.version }}-windows
+          path: INSTALL/ventoy-*windows*
+          if-no-files-found: error
+
+      - name: Upload Linux package
+        uses: actions/upload-artifact@v7
+        with:
+          name: ventoy-${{ steps.version.outputs.version }}-linux
+          path: INSTALL/ventoy-*linux*
+          if-no-files-found: error
+
+      - name: Upload LiveCD package
+        uses: actions/upload-artifact@v7
+        with:
+          name: ventoy-${{ steps.version.outputs.version }}-livecd
+          path: INSTALL/ventoy-*livecd*
+          if-no-files-found: error
+
+      - name: Upload SHA256 checksums
+        uses: actions/upload-artifact@v7
+        with:
+          name: SHA256SUM
+          path: INSTALL/sha256.txt
+          if-no-files-found: error
+
+      # Always capture the build log, even when the build step fails
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-log
+          path: DOC/build.log
+          if-no-files-found: warn
+
+      # ── GitHub Release (tag builds only) ──────────────────────────────────
+      # Publishes a draft release with all build artifacts attached.
+      # Draft = true so you can review and edit notes before making it public.
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          name: "Ventoy ${{ steps.version.outputs.version }}"
+          body: |
+            ## Ventoy ${{ steps.version.outputs.version }}
+
+            Built from commit ${{ github.sha }}.
+
+            ### Files
+            | File | Description |
+            |------|-------------|
+            | `ventoy-*-windows.zip` | Windows installer |
+            | `ventoy-*-linux.tar.gz` | Linux installer |
+            | `ventoy-*-livecd.iso` | LiveCD ISO |
+            | `sha256.txt` | SHA-256 checksums |
+
+            > **Note:** EFI files in this build are **not signed** and require Secure Boot to be disabled.
+          files: |
+            INSTALL/ventoy-*windows*
+            INSTALL/ventoy-*linux*
+            INSTALL/ventoy-*livecd*
+            INSTALL/sha256.txt
