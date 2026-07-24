@@ -29,7 +29,7 @@ boot
 title
 root
 title Grub2 File Manager 
-map --mem /efi/boot/grubfm.iso (0xff)
+map --mem /boot/grubfm.iso.gz (0xff)
 map --hook
 chainloader (0xff)
 title
