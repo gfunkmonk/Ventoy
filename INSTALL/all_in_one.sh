@@ -12,13 +12,13 @@ LOG=$VTOY_PATH/DOC/build.log
 
 cd $VTOY_PATH/DOC
 cilog "prepare_env ..."
-bash prepare_env.sh
+sh prepare_env.sh
 
 export PATH=$PATH:/opt/gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu/bin:/opt/aarch64--uclibc--stable-2020.08-1/bin:/opt/mips-loongson-gcc7.3-linux-gnu/2019.06-29/bin/:/opt/mips64el-linux-musl-gcc730/bin/
 
 cilog "build grub2 ..."
 cd $VTOY_PATH/GRUB2
-bash buildgrub.sh >> $LOG 2>&1 || exit 1
+sh buildgrub.sh >> $LOG 2>&1 || exit 1
 
 cilog "build ipxe ..."
 cd $VTOY_PATH/IPXE
