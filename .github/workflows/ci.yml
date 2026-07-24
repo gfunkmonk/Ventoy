@@ -125,7 +125,8 @@ jobs:
         if: github.event.inputs.build_type == 'Release'
         uses: softprops/action-gh-release@v2
         with:
-          draft: true
+          draft: false
+          tag_name: v${{ steps.version.outputs.version }}
           name: "Ventoy ${{ steps.version.outputs.version }}"
           body: |
             ## Ventoy ${{ steps.version.outputs.version }}
