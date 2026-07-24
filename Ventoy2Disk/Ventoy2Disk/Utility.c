@@ -976,9 +976,8 @@ int VentoyFillGpt(UINT64 DiskSizeBytes, VTOY_GPT_INFO *pInfo)
     Table[0].Attr = 0;
     memcpy(Table[0].Name, L"Ventoy", 6 * 2);
 
-    // to fix windows issue
-    //memcpy(&(Table[1].PartType), &EspPartType, sizeof(GUID));
-    memcpy(&(Table[1].PartType), &WindowsDataPartType, sizeof(GUID));
+    // Use ESP GUID so firmware recognizes partition as EFI bootable
+    memcpy(&(Table[1].PartType), &EspPartType, sizeof(GUID));
     CoCreateGuid(&(Table[1].PartGuid));
     Table[1].StartLBA = Table[0].LastLBA + 1;
     Table[1].LastLBA = Table[1].StartLBA + VENTOY_EFI_PART_SIZE / 512 - 1;

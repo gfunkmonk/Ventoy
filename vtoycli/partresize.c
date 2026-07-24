@@ -590,9 +590,10 @@ static int update_part_table(char *disk, UINT64 part2start)
 			memcpy(PartTbl + (j + 1), PartTbl + j, sizeof(VTOY_GPT_PART_TBL));
 		}
 
-        // to fix windows issue
+        // Use ESP GUID so firmware recognizes partition as EFI bootable
+        static GUID g_EspPartGuid = { 0xc12a7328, 0xf81f, 0x11d2, { 0xba, 0x4b, 0x00, 0xa0, 0xc9, 0x3e, 0xc9, 0x3b } };
         memset(PartTbl + 1, 0, sizeof(VTOY_GPT_PART_TBL));
-		memcpy(&(PartTbl[1].PartType), &g_WindowsDataPartGuid, sizeof(GUID));
+		memcpy(&(PartTbl[1].PartType), &g_EspPartGuid, sizeof(GUID));
 		ventoy_gen_preudo_uuid(&(PartTbl[1].PartGuid));
 
         PartTbl[0].LastLBA = part2start - 1;

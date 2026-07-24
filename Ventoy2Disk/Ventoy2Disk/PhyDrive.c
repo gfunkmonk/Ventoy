@@ -1125,9 +1125,14 @@ static int FormatPart2Fat(HANDLE hDrive, UINT64 StartSectorId)
         Log("Malloc whole img buffer success, now decompress ...");
         unxz(data, len, NULL, NULL, g_part_img_buf[0], &writelen, unxz_error);
 
-        if (len == writelen)
+        if (writelen > 0 && writelen <= VENTOY_EFI_PART_SIZE)
         {
-            Log("decompress finished success");
+            Log("decompress finished success, writelen:%u", writelen);
+            /* zero-pad the remainder of the partition buffer */
+            if (writelen < VENTOY_EFI_PART_SIZE)
+            {
+                memset(g_part_img_buf[0] + writelen, 0, VENTOY_EFI_PART_SIZE - writelen);
+            }
 
 			VentoyProcSecureBoot(g_SecureBoot);
 
@@ -1201,10 +1206,23 @@ static int FormatPart2Fat(HANDLE hDrive, UINT64 StartSectorId)
 
         unxz(data, len, NULL, disk_xz_flush, NULL, NULL, unxz_error);
 
-        if (g_disk_unxz_len == VENTOY_EFI_PART_SIZE)
+        if (g_disk_unxz_len > 0 && g_disk_unxz_len <= VENTOY_EFI_PART_SIZE)
         {
-            Log("decompress finished success");
-			
+            Log("decompress finished success, g_disk_unxz_len:%u", g_disk_unxz_len);
+
+            /* zero-pad any buffers beyond the decompressed data */
+            {
+                UINT32 unxz_mb = (g_disk_unxz_len + SIZE_1MB - 1) / SIZE_1MB;
+                UINT32 last_partial = g_disk_unxz_len % SIZE_1MB;
+                if (last_partial > 0 && unxz_mb > 0)
+                {
+                    memset(g_part_img_buf[unxz_mb - 1] + last_partial, 0, SIZE_1MB - last_partial);
+                }
+                for (i = (int)unxz_mb; i < (int)(VENTOY_EFI_PART_SIZE / SIZE_1MB); i++)
+                {
+                    memset(g_part_img_buf[i], 0, SIZE_1MB);
+                }
+            }
 			VentoyProcSecureBoot(g_SecureBoot);
 
             for (i = 0; i < VENTOY_EFI_PART_SIZE / SIZE_1MB; i++)
@@ -2531,9 +2549,9 @@ int PartitionResizeForVentoy(PHY_DRIVE_INFO *pPhyDrive)
 
 		pMBR->BootCode[92] = 0x22;
 
-		// to fix windows issue
+        // Use ESP GUID so firmware recognizes partition as EFI bootable
         memset(pGPT->PartTbl + 1, 0, sizeof(VTOY_GPT_PART_TBL));
-		memcpy(&(pGPT->PartTbl[1].PartType), &WindowsDataPartType, sizeof(GUID));
+        memcpy(&(pGPT->PartTbl[1].PartType), &EspPartType, sizeof(GUID));
 		CoCreateGuid(&(pGPT->PartTbl[1].PartGuid));
 
 		pGPT->PartTbl[1].StartLBA = pGPT->PartTbl[0].LastLBA + 1;

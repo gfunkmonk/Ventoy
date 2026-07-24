@@ -436,9 +436,10 @@ int ventoy_fill_gpt(uint64_t size, uint64_t reserve, int align4k, VTOY_GPT_INFO 
     Table[0].Attr = 0;
     ventoy_fill_gpt_partname(Table[0].Name, "Ventoy");
 
-    // to fix windows issue
+    // Use ESP GUID so firmware recognizes partition as EFI bootable
     //memcpy(&(Table[1].PartType), &EspPartType, sizeof(GUID));
-    memcpy(&(Table[1].PartType), &WindowsDataPartType, sizeof(ventoy_guid));
+    ventoy_guid EspPartType = { 0xc12a7328, 0xf81f, 0x11d2, { 0xba, 0x4b, 0x00, 0xa0, 0xc9, 0x3e, 0xc9, 0x3b } };
+    memcpy(&(Table[1].PartType), &EspPartType, sizeof(ventoy_guid));
     ventoy_gen_preudo_uuid(&(Table[1].PartGuid));
     Table[1].StartLBA = Table[0].LastLBA + 1;
     Table[1].LastLBA = Table[1].StartLBA + VTOYEFI_PART_BYTES / 512 - 1;
