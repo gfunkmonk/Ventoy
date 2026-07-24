@@ -1,10 +1,16 @@
 name: Ventoy CI
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
   workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        type: choice
+        options:
+          - Artifact
+          - Release
+        default: 'Artifact'
 
 # Cancel any in-progress run for the same ref so stale builds don't queue up
 concurrency:
@@ -23,7 +29,9 @@ jobs:
 
       # Read the version BEFORE the build runs — the build may modify grub.cfg.
       # grub.cfg contains:  set VENTOY_VERSION="1.1.16"
+      # Skip for Artifact builds (CI mode replaces version with date stamp).
       - name: Extract Ventoy version
+        if: github.event.inputs.build_type == 'Release'
         id: version
         run: |
           VER=$(grep 'set VENTOY_VERSION=' INSTALL/grub/grub.cfg \
@@ -33,6 +41,15 @@ jobs:
             echo "::error::Could not extract VENTOY_VERSION from grub.cfg"
             exit 1
           fi
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "Ventoy version: $VER"
+
+      - name: CI Ventoy version
+        if: github.event.inputs.build_type == 'Artifact'
+        id: version
+        run: |
+          VER=$(date +%m%d%H%M)
+          sed "s/VENTOY_VERSION=.*/VENTOY_VERSION=\"$VER\"/"  -i .INSTALL/grub/grub.cfg
           echo "version=$VER" >> "$GITHUB_OUTPUT"
           echo "Ventoy version: $VER"
 
@@ -101,11 +118,11 @@ jobs:
           path: DOC/build.log
           if-no-files-found: warn
 
-      # ── GitHub Release (tag builds only) ──────────────────────────────────
+      # ── GitHub Release (Release builds only) ─────────────────────────────
       # Creates a draft release so you can review before publishing.
 
       - name: Publish GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
+        if: github.event.inputs.build_type == 'Release'
         uses: softprops/action-gh-release@v2
         with:
           draft: true
