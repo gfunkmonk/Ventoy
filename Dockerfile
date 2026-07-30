@@ -1,18 +1,19 @@
-FROM centos:7
+FROM debian:12
 
-RUN sed -i \
-    -e 's/^mirrorlist/#mirrorlist/' \
-    -e 's/^#baseurl/baseurl/' \
-    -e 's/mirror\.centos\.org/vault.centos.org/' \
-    /etc/yum.repos.d/*.repo && \
-    yum -y -q install \
-        libXpm net-tools bzip2 wget vim gcc gcc-c++ samba dos2unix glibc-devel glibc.i686 glibc-devel.i686 \
-        mpfr.i686 mpfr-devel.i686 rsync autogen autoconf automake libtool gettext* bison binutils \
-        flex device-mapper-devel SDL libpciaccess libusb freetype freetype-devel gnu-free-* qemu-* virt-* \
-        libvirt* vte* NetworkManager-bluetooth brlapi fuse-devel dejavu* gnu-efi* pesign shim \
-        iscsi-initiator-utils grub2-tools zip nasm acpica-tools glibc-static zlib-static xorriso lz4 squashfs-tools && \
-    yum clean all && \
-    rm -rf /var/cache/yum
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        acpica-tools autoconf autogen automake binutils bison bzip2 dos2unix flex g++ gcc \
+        gcc-multilib gettext gnu-efi grub-common libc6:i386 libc6-dev libc6-dev-i386 \
+        libbrlapi-dev libdevmapper-dev libfreetype6-dev libfuse-dev libmpfr-dev libmpfr6:i386 \
+        libpciaccess-dev libsdl2-dev libtool libusb-1.0-0-dev libvte-2.91-dev libxpm-dev lz4 \
+        nasm net-tools network-manager open-iscsi pesign qemu-kvm qemu-system-x86 qemu-utils \
+        rsync samba shim-signed squashfs-tools virtinst libvirt-daemon-system libvirt-clients \
+        vim wget xorriso zip zlib1g-dev zlib1g:i386 fonts-dejavu-core fonts-freefont-ttf && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /ventoy/INSTALL
 CMD ls -la && sh docker_ci_build.sh
